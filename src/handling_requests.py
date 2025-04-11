@@ -8,14 +8,22 @@ def getData(url,address):
     try:
         response = requests.get(url + address)
         if response.status_code == 200:
-            print("DEBUG:",url + address)
+            data = response.json()
+
+            host: str = data["host"]
+            port: int = data["port"]
+            ip:   str = data["ip_address"]
+            eula: bool = data["eula_blocked"]
+            version: str= data["version"]["name_clean"]
+            status: bool = data["online"]
+
             print(response.status_code)
         else:
-            print("DEBUG:",url)
             print(response.status_code)
 
     except Exception as e:
         print(e)
-
+    
+    return host,port,ip,eula,version,status
     
 
