@@ -9,6 +9,8 @@ class App(ctk.CTk):
         super().__init__()
         self.title("MC Server Gui")
         self.geometry("1000x700")
+        self.minsize(1000,700)
+        self.maxsize(1000,700)
 
         self.configure(fg_color=nord["nord0"])
         Main(self)
