@@ -19,4 +19,4 @@ nord = {
     "nord14": "#A3BE8C",  # green (strings, additions)
     "nord15": "#B48EAD",  # purple (regex, special)
 }
-
+eerie_black = "#222321"
