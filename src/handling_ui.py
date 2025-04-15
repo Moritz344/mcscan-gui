@@ -9,8 +9,9 @@ from PIL import Image
 import base64
 import io
 import CTkMessagebox
+from CTkToolTip import *
 
-# TODO: Messageboxen,Loading animation, zeige player list an
+# TODO: App icon
 
 class Main():
     def __init__(self,window):
@@ -76,6 +77,7 @@ class Main():
         self.eingabe_feld.bind("<Enter>",lambda e: self.eingabe_anim(True))
         self.eingabe_feld.bind("<Leave>",lambda e: self.eingabe_anim(False))
 
+
         self.big_frame.configure(width=400)
 
         self.server_counter = 0
@@ -100,19 +102,23 @@ class Main():
             
         self.placeholder_frame = ctk.CTkFrame(self.window,width=1000,corner_radius=10,fg_color="transparent")
         self.placeholder_frame.place(x=300,y=230)
-        cat_image = ctk.CTkImage(Image.open("assets/cat.png"),size=(100,100))
-        self.cat_label = ctk.CTkLabel(self.placeholder_frame,text="",image=cat_image)
-        self.cat_label.place(x=0,y=100)
+        placeholder_image = ctk.CTkImage(Image.open("assets/404.png"),size=(200,200))
+        self.placeholder_label = ctk.CTkLabel(self.placeholder_frame,text="",image=placeholder_image,)
+        self.placeholder_label.place(x=0,y=30)
         self.placeholder_text = ctk.CTkLabel(self.placeholder_frame,text="Nothing here yet.",font=("opensans",50))
         self.placeholder_text.pack(pady=200,side= TOP )
         
         # -- creating tags for color
-        self.mods_label.tag_config("warning_tag",foreground="red")
-        self.player_label.tag_config("warning_tag",foreground="red")
-        self.plugins_label.tag_config("warning_tag",foreground="red")
+        self.mods_label.tag_config("warning_tag",foreground=nord["nord11"])
+        self.player_label.tag_config("warning_tag",foreground=nord["nord11"])
+        self.plugins_label.tag_config("warning_tag",foreground=nord["nord11"])
 
         # ---
 
+        # -- tooltips
+        self.tooltip_1 = CTkToolTip(self.icon,delay=0.3,message="No Icon found")
+        self.tooltip_2 = CTkToolTip(self.suchen_btn,delay=0.5,message="Look for Server")
+        
         self.color_config()
 
 
@@ -144,15 +150,19 @@ class Main():
         self.suchen_btn.configure(fg_color=nord["nord1"],hover_color=nord["nord2"])
 
         
-    def getIcon(self,icon):
+    def getIcon(self,icon,icon_name):
         try:
             icon_data = base64.b64decode(icon.split(",")[1])
             image_icon = ctk.CTkImage(Image.open(io.BytesIO(icon_data)),size=(100,100))
-            return image_icon
-        except Exception as e:
-            CTkMessagebox.CTkMessagebox(self.window,message="Icon not found",icon="warning",title="Icon",font=("opensans",15))
+            self.icon_status = True
+            return image_icon,self.icon_status
+        except Exception :
+            CTkMessagebox.CTkMessagebox(self.window,
+            message="Icon not found",icon="warning",title="Icon",font=("opensans",15))
             print("DEBUG: Wenn Icon 'None' ist kann dieser fehler kommen",)
-            icon_data = ""
+            image_icon = ctk.CTkImage(Image.open("assets/question-sign.png"),size=(100,100))
+            self.icon_status = False
+            return image_icon,self.icon_status
     def widget_animation(self):
         self.frame_x -= 10
         if self.frame_x >= 15:
@@ -171,7 +181,7 @@ class Main():
         self.player_label.configure(state="normal")
         self.plugins_label.configure(state="normal")
         self.placeholder_text.pack_forget()
-        self.cat_label.place_forget()
+        self.placeholder_label.place_forget()
         self.placeholder_frame.place_forget()
 
         eingabe = self.eingabe_var.get()
@@ -191,6 +201,7 @@ class Main():
             self.version = version
             self.status = status
             self.server_icon = server_icon
+            self.icon_status: None = None
             self.motd = motd
             self.mods = ",\n".join(mods_list)
             self.plugins = ",\n".join(plugins_list)
@@ -204,17 +215,21 @@ class Main():
             self.plugins_label.delete(1.0,tk.END)
             # --
             if self.mods != "":
-                self.mods_label.insert(1.0,f"""Mods List:
-{self.mods}
-                """)
+                self.mods_label.insert(1.0,f"""Mods List:\n
+{self.mods}""")
             else:
                 self.mods_label.insert(1.0,"""
-I was not able to get this information.""","warning_tag")
+I wasn't able to obtain this information.""","warning_tag")
                 self.mods_label.insert(1.0,"Mods List:\n ")
 
 
-            image_icon = self.getIcon(self.server_icon)
-            self.icon.configure(image=image_icon)
+            image_icon,self.icon_status = self.getIcon(self.server_icon,self.icon_status)
+            self.icon.configure(image=image_icon,)
+            if not self.icon_status:
+                self.tooltip_1.configure(message="Icon not found")
+            else:
+                self.tooltip_1.configure(message=f"Server icon from: {self.host} ")
+            
             if self.player_list != "":
                 self.player_label.insert(1.0,f"""Player List:\n
 {self.player_list}
@@ -222,7 +237,7 @@ I was not able to get this information.""","warning_tag")
                 """)
             else:
                 self.player_label.insert(1.0,"""
-I was not able to get this information.""","warning_tag")
+I wasn't able to obtain this information.""","warning_tag")
                 self.player_label.insert(1.0,"Player List:\n")
             if self.plugins != "":
             
@@ -231,7 +246,7 @@ I was not able to get this information.""","warning_tag")
             """)
             else:
                 self.plugins_label.insert(1.0,"""
-I was not able to get this information.""","warning_tag")
+I wasn't able to obtain this information.""","warning_tag")
                 self.plugins_label.insert(1.0,"Plugins List:\n")
 
             # -- Textbox deaktivieren nach einfügen
