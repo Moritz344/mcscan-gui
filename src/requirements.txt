@@ -1,0 +1,6 @@
+requests
+customtkinter
+CTkTable
+pillow
+CTkMessagebox
+CTkToolTip
