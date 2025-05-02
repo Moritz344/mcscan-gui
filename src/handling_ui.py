@@ -11,7 +11,6 @@ import io
 import CTkMessagebox
 from CTkToolTip import *
 
-# TODO: stehen geblieben bei ui verbesserung Mods List
 
 class Main():
     def __init__(self,window):
@@ -57,14 +56,10 @@ class Main():
 
         self.row1 = ctk.CTkFrame(master=self.window,fg_color="transparent")
         self.row1.pack(padx=0,pady=0)
-        # -- Player list? Server Icon? MOTD, Plugins , Mods
-        # 15 200
-        self.frame_x_2 = 1000
 
         self.icon_frame = ctk.CTkFrame(self.window,width=150,height=150,fg_color="transparent",)
         self.motd_frame = ctk.CTkFrame(master=self.window,width=400,height=146,)
 
-        self.motd_frame.place(x=self.frame_x_2,y=200) 
         self.icon_frame.place(x=20,y=180)
 
         self.motd_label = ctk.CTkLabel(self.motd_frame,text="",corner_radius=10,
@@ -84,6 +79,11 @@ class Main():
         self.plugins_label = ctk.CTkTextbox(self.plugin_frame,width=530,height=130,font=("opensans",20),fg_color="transparent")
         self.plugins_label.place(x=4,y=10)
 
+        self.player_frame = ctk.CTkFrame(self.window,width=410,height=390,border_width=5,corner_radius=0,fg_color="#1e293b",border_color="#334155")
+        self.player_header = ctk.CTkFrame(self.window,width=410,height=100,fg_color="#334155",corner_radius=0)
+
+        self.player_label = ctk.CTkTextbox(self.player_frame,width=390,height=370,font=("opensans",20),fg_color="transparent")
+        self.player_label.place(x=4,y=10)
 
         self.table = CTkTable(master=self.row1, justify="center",header_color=nord["nord3"],
         row=2, column=7, colors=["#1e293b","#1e293b"],values=self.value,corner_radius=0,height=30,font=("opensans",16),)
@@ -95,19 +95,10 @@ class Main():
         self.eingabe_feld.bind("<Enter>",lambda e: self.eingabe_anim(True))
         self.eingabe_feld.bind("<Leave>",lambda e: self.eingabe_anim(False))
 
-
-
-        self.server_counter = 0
         self.frame_color = "#2E2E2E"
 
-        # -- Labels for big frame 2
-
-       # self.player_label = ctk.CTkTextbox(self.big_frame,width=380,height=400,font=("opensans",20))
-       # self.player_label.place(x=10,y=25)
-
-        #self.player_info = ctk.CTkLabel(self.big_frame,text="shows a max of 12 players.",text_color="grey",
-        #font=("opensans",15))
-        #self.player_info.place(x=20,y=450)
+        self.player_info = ctk.CTkLabel(self.window,text="shows a max of 12 players.",text_color="grey",
+        font=("opensans",15),fg_color="transparent",height=10)
             
         self.placeholder_frame = ctk.CTkFrame(self.window,width=1000,corner_radius=10,fg_color="transparent")
         self.placeholder_frame.place(x=300,y=230)
@@ -172,19 +163,12 @@ class Main():
             image_icon = ctk.CTkImage(Image.open("assets/question-sign.png"),size=(100,100))
             self.icon_status = False
             return image_icon,self.icon_status
-    def widget_animation(self):
-        #self.frame_x -= 10
-        #if self.frame_x >= 15:
-        #    self.big_frame_2.place(x=self.frame_x,y=180)
-        #    self.window.after(1,self.widget_animation)
-
-        self.frame_x_2 -= 10
-        if self.frame_x_2 >= 160:
-            self.motd_frame.place(x=self.frame_x_2,y=180)
-            self.window.after(1,self.widget_animation)
 
     def getEingabe(self,):
-        self.widget_animation()
+
+        self.motd_frame.place(x=160,y=180)
+
+        self.player_info.place(x=580,y=670)
 
         self.mods_header.place(x=20,y=340)
         self.mods_frame.place(x=20,y=410)
@@ -192,13 +176,19 @@ class Main():
         self.plugin_header.place(x=20,y=520)
         self.plugin_frame.place(x=20,y=520)
 
+        self.player_header.place(x=570,y=180)
+        self.player_frame.place(x=570,y=280)
+
         self.plugin_icon = ctk.CTkImage(Image.open("assets/plugin.png"),size=(30,30))
         ctk.CTkLabel(self.plugin_header,compound="left",image=self.plugin_icon,text=" Plugins List",font=("opensans",30,)).place(x=10,y=5)
+        
+        self.player_icon = ctk.CTkImage(Image.open("assets/profile.png"),size=(80,80))
+        ctk.CTkLabel(self.player_header,compound="left",image=self.player_icon,text=" Player List",font=("opensans",60)).place(x=10,y=5)
 
         self.mod_icon = ctk.CTkImage(Image.open("assets/puzzle.png"),size=(50,50))
         ctk.CTkLabel(self.mods_header,compound="left",image=self.mod_icon,text=" Mods List",font=("opensans",40)).place(x=10,y=10)
         self.mods_label.configure(state="normal")
-        #self.player_label.configure(state="normal")
+        self.player_label.configure(state="normal")
         self.plugins_label.configure(state="normal")
         self.placeholder_text.pack_forget()
         self.placeholder_label.place_forget()
@@ -237,43 +227,38 @@ class Main():
             self.motd_label.configure(text=self.motd)
             # -- löschen von vorherigen eingaben
             self.mods_label.delete(1.0,tk.END)
-#            self.player_label.delete(1.0,tk.END)
+            self.player_label.delete(1.0,tk.END)
             self.plugins_label.delete(1.0,tk.END)
-#            # --
+            # --
             if self.mods != "":
                 self.mods_label.insert(1.0,f"""{self.mods}""")
             else:
                 self.mods_label.insert(1.0,"""
 I wasn't able to obtain this information.""","warning_tag")
-                self.mods_label.insert(1.0,"Mods List:\n ")
 
-#
-#
+
+
             image_icon,self.icon_status = self.getIcon(self.server_icon,self.icon_status)
             self.icon.configure(image=image_icon,)
             if not self.icon_status:
                 self.tooltip_1.configure(message="Icon not found")
             else:
                 self.tooltip_1.configure(message=f"Server icon from: {self.host} ")
-#            
-#            if self.player_list != "":
-#                self.player_label.insert(1.0,f"""Player List:\n
-#{self.player_list}
-#
-#                """)
-#            else:
-#                self.player_label.insert(1.0,"""
-#I wasn't able to obtain this information.""","warning_tag")
-#                self.player_label.insert(1.0,"Player List:\n")
+            
+            if self.player_list != "":
+                self.player_label.insert(1.0,f"""{self.player_list}""")
+            else:
+                self.player_label.insert(1.0,""" \n
+I wasn't able to obtain this information.""","warning_tag")
             if self.plugins != "":
                 self.plugins_label.insert(1.0,f"""{self.plugins}""")
             else:
-                self.plugins_label.insert(1.0,"""
+                self.plugins_label.insert(1.0,""" \n
 I wasn't able to obtain this information.""","warning_tag")
-#
-#            # -- Textbox deaktivieren nach einfügen
+
+            # -- Textbox deaktivieren nach einfügen
             self.mods_label.configure(state="disabled")
-#            self.player_label.configure(state="disabled")
+            self.player_label.configure(state="disabled")
             self.plugins_label.configure(state="disabled")
 #
             if self.status:
@@ -301,6 +286,8 @@ I wasn't able to obtain this information.""","warning_tag")
             self.eingabe_feld.delete(0,tk.END)
 
         except Exception as e:
+            image_icon = ctk.CTkImage(Image.open("assets/question-sign.png"),size=(100,100))
+            self.icon.configure(image=image_icon,)
             CTkMessagebox.CTkMessagebox(self.window,message="This Server does not exist",
             icon="warning",title="Invalid Server Name",font=("opensans",15))
             self.eingabe_feld.delete(0,tk.END)
