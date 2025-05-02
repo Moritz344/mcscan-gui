@@ -14,7 +14,7 @@ class Startscreen(object):
         self.window = ctk.CTk()
         self.window.maxsize(800,600)
         self.window.minsize(800,600)
-        self.window.iconbitmap("assets/app-icon.ico")
+        #self.window.iconbitmap("assets/app-icon.ico")
 
         self.window.geometry("800x600")
         self.window.title("mcscan")
