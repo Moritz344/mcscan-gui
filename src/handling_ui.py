@@ -11,7 +11,7 @@ import io
 import CTkMessagebox
 from CTkToolTip import *
 
-# TODO: App icon
+# TODO: stehen geblieben bei ui verbesserung Mods List
 
 class Main():
     def __init__(self,window):
@@ -59,46 +59,55 @@ class Main():
         self.row1.pack(padx=0,pady=0)
         # -- Player list? Server Icon? MOTD, Plugins , Mods
         # 15 200
-        self.frame_x_2 = 1200
-        self.big_frame = ctk.CTkFrame(master=self.window,width=500,height=500)
-        self.big_frame.place(x=self.frame_x_2,y=200)
+        self.frame_x_2 = 1000
 
-        self.frame_x = 1000
-        self.big_frame_2= ctk.CTkFrame(master=self.window,width=500,height=500)
-        self.big_frame_2.place(x=self.frame_x,y=0)
+        self.icon_frame = ctk.CTkFrame(self.window,width=150,height=150,fg_color="transparent",)
+        self.motd_frame = ctk.CTkFrame(master=self.window,width=400,height=146,)
 
-        self.table = CTkTable(master=self.row1, justify="center",header_color=nord["nord10"],
-        row=2, column=7, values=self.value)
+        self.motd_frame.place(x=self.frame_x_2,y=200) 
+        self.icon_frame.place(x=20,y=180)
+
+        self.motd_label = ctk.CTkLabel(self.motd_frame,text="",corner_radius=10,
+        bg_color=f"{eerie_black}",width=400,height=150,font=("opensans",20))
+        
+        self.motd_label.place(x=0,y=0)
+        
+        self.mods_frame = ctk.CTkFrame(self.window,width=540,height=95,border_width=5,corner_radius=0,fg_color="#1e293b",border_color="#334155")
+        self.mods_header = ctk.CTkFrame(self.window,width=540,height=70,fg_color="#334155",corner_radius=0)
+
+        self.mods_label = ctk.CTkTextbox(self.mods_frame,width=530,height=90,font=("opensans",20),activate_scrollbars=True,fg_color="transparent")
+        self.mods_label.place(x=4,y=0)
+
+        self.plugin_frame = ctk.CTkFrame(self.window,width=540,height=150,border_width=5,corner_radius=0,fg_color="#1e293b",border_color="#334155")
+        self.plugin_header = ctk.CTkFrame(self.window,width=540,height=50,fg_color="#334155",corner_radius=0)
+
+        self.plugins_label = ctk.CTkTextbox(self.plugin_frame,width=530,height=130,font=("opensans",20),fg_color="transparent")
+        self.plugins_label.place(x=4,y=10)
+
+
+        self.table = CTkTable(master=self.row1, justify="center",header_color=nord["nord3"],
+        row=2, column=7, colors=["#1e293b","#1e293b"],values=self.value,corner_radius=0,height=30,font=("opensans",16),)
         self.table.pack(expand=True, padx=20, pady=10)
         # -- Server icon
-        self.icon = ctk.CTkLabel(master=self.big_frame_2,text="",image=None,width=500,height=500,)
+        self.icon = ctk.CTkLabel(master=self.icon_frame,text="",image=None,width=500,height=500,)
         self.icon.place(x=-180,y=-180)
 
         self.eingabe_feld.bind("<Enter>",lambda e: self.eingabe_anim(True))
         self.eingabe_feld.bind("<Leave>",lambda e: self.eingabe_anim(False))
 
 
-        self.big_frame.configure(width=400)
 
         self.server_counter = 0
         self.frame_color = "#2E2E2E"
 
         # -- Labels for big frame 2
-        self.motd_label = ctk.CTkLabel(self.big_frame_2,text="",corner_radius=10,
-        bg_color=f"{eerie_black}",width=290,height=100,font=("opensans",15))
-        
-        self.motd_label.place(x=140,y=20)
 
-        self.mods_label = ctk.CTkTextbox(self.big_frame_2,width=474,font=("opensans",20))
-        self.mods_label.place(x=10,y=140)
-        self.player_label = ctk.CTkTextbox(self.big_frame,width=380,height=400,font=("opensans",20))
-        self.player_label.place(x=10,y=25)
-        self.plugins_label = ctk.CTkTextbox(self.big_frame_2,width=474,height=138,font=("opensans",20))
-        self.plugins_label.place(x=10,y=354)
+       # self.player_label = ctk.CTkTextbox(self.big_frame,width=380,height=400,font=("opensans",20))
+       # self.player_label.place(x=10,y=25)
 
-        self.player_info = ctk.CTkLabel(self.big_frame,text="shows a max of 12 players.",text_color="grey",
-        font=("opensans",15))
-        self.player_info.place(x=20,y=450)
+        #self.player_info = ctk.CTkLabel(self.big_frame,text="shows a max of 12 players.",text_color="grey",
+        #font=("opensans",15))
+        #self.player_info.place(x=20,y=450)
             
         self.placeholder_frame = ctk.CTkFrame(self.window,width=1000,corner_radius=10,fg_color="transparent")
         self.placeholder_frame.place(x=300,y=230)
@@ -110,7 +119,7 @@ class Main():
         
         # -- creating tags for color
         self.mods_label.tag_config("warning_tag",foreground=nord["nord11"])
-        self.player_label.tag_config("warning_tag",foreground=nord["nord11"])
+        #self.player_label.tag_config("warning_tag",foreground=nord["nord11"])
         self.plugins_label.tag_config("warning_tag",foreground=nord["nord11"])
 
         # ---
@@ -147,13 +156,13 @@ class Main():
 
     def color_config(self):
         self.eingabe_feld.configure(fg_color=nord["nord1"])
-        self.suchen_btn.configure(fg_color=nord["nord1"],hover_color=nord["nord2"])
+        self.suchen_btn.configure(fg_color=nord["nord1"],hover_color=nord["nord3"])
 
         
     def getIcon(self,icon,icon_name):
         try:
             icon_data = base64.b64decode(icon.split(",")[1])
-            image_icon = ctk.CTkImage(Image.open(io.BytesIO(icon_data)),size=(100,100))
+            image_icon = ctk.CTkImage(Image.open(io.BytesIO(icon_data)),size=(150,150))
             self.icon_status = True
             return image_icon,self.icon_status
         except Exception :
@@ -164,21 +173,32 @@ class Main():
             self.icon_status = False
             return image_icon,self.icon_status
     def widget_animation(self):
-        self.frame_x -= 10
-        if self.frame_x >= 15:
-            self.big_frame_2.place(x=self.frame_x,y=180)
-            self.window.after(1,self.widget_animation)
+        #self.frame_x -= 10
+        #if self.frame_x >= 15:
+        #    self.big_frame_2.place(x=self.frame_x,y=180)
+        #    self.window.after(1,self.widget_animation)
 
         self.frame_x_2 -= 10
-        if self.frame_x_2 >= 580:
-            self.big_frame.place(x=self.frame_x_2,y=180)
-            self.window.after(100,self.widget_animation)
+        if self.frame_x_2 >= 160:
+            self.motd_frame.place(x=self.frame_x_2,y=180)
+            self.window.after(1,self.widget_animation)
 
     def getEingabe(self,):
         self.widget_animation()
 
+        self.mods_header.place(x=20,y=340)
+        self.mods_frame.place(x=20,y=410)
+
+        self.plugin_header.place(x=20,y=520)
+        self.plugin_frame.place(x=20,y=520)
+
+        self.plugin_icon = ctk.CTkImage(Image.open("assets/plugin.png"),size=(30,30))
+        ctk.CTkLabel(self.plugin_header,compound="left",image=self.plugin_icon,text=" Plugins List",font=("opensans",30,)).place(x=10,y=5)
+
+        self.mod_icon = ctk.CTkImage(Image.open("assets/puzzle.png"),size=(50,50))
+        ctk.CTkLabel(self.mods_header,compound="left",image=self.mod_icon,text=" Mods List",font=("opensans",40)).place(x=10,y=10)
         self.mods_label.configure(state="normal")
-        self.player_label.configure(state="normal")
+        #self.player_label.configure(state="normal")
         self.plugins_label.configure(state="normal")
         self.placeholder_text.pack_forget()
         self.placeholder_label.place_forget()
@@ -206,54 +226,56 @@ class Main():
             self.mods = ",\n".join(mods_list)
             self.plugins = ",\n".join(plugins_list)
 
-            # -- motd text
-            self.motd_label.configure(text=self.motd)
 
+            # -- motd text
+            print(len(self.motd))
+            if len(self.motd) > 56:
+                self.motd_label.configure(font=("opensans",18))
+            elif len(self.motd) <= 56:
+                self.motd_label.configure(font=("opensans",20))
+
+            self.motd_label.configure(text=self.motd)
             # -- löschen von vorherigen eingaben
             self.mods_label.delete(1.0,tk.END)
-            self.player_label.delete(1.0,tk.END)
+#            self.player_label.delete(1.0,tk.END)
             self.plugins_label.delete(1.0,tk.END)
-            # --
+#            # --
             if self.mods != "":
-                self.mods_label.insert(1.0,f"""Mods List:\n
-{self.mods}""")
+                self.mods_label.insert(1.0,f"""{self.mods}""")
             else:
                 self.mods_label.insert(1.0,"""
 I wasn't able to obtain this information.""","warning_tag")
                 self.mods_label.insert(1.0,"Mods List:\n ")
 
-
+#
+#
             image_icon,self.icon_status = self.getIcon(self.server_icon,self.icon_status)
             self.icon.configure(image=image_icon,)
             if not self.icon_status:
                 self.tooltip_1.configure(message="Icon not found")
             else:
                 self.tooltip_1.configure(message=f"Server icon from: {self.host} ")
-            
-            if self.player_list != "":
-                self.player_label.insert(1.0,f"""Player List:\n
-{self.player_list}
-
-                """)
-            else:
-                self.player_label.insert(1.0,"""
-I wasn't able to obtain this information.""","warning_tag")
-                self.player_label.insert(1.0,"Player List:\n")
+#            
+#            if self.player_list != "":
+#                self.player_label.insert(1.0,f"""Player List:\n
+#{self.player_list}
+#
+#                """)
+#            else:
+#                self.player_label.insert(1.0,"""
+#I wasn't able to obtain this information.""","warning_tag")
+#                self.player_label.insert(1.0,"Player List:\n")
             if self.plugins != "":
-            
-                self.plugins_label.insert(1.0,f"""Plugins List:\n
-{self.plugins}
-            """)
+                self.plugins_label.insert(1.0,f"""{self.plugins}""")
             else:
                 self.plugins_label.insert(1.0,"""
 I wasn't able to obtain this information.""","warning_tag")
-                self.plugins_label.insert(1.0,"Plugins List:\n")
-
-            # -- Textbox deaktivieren nach einfügen
+#
+#            # -- Textbox deaktivieren nach einfügen
             self.mods_label.configure(state="disabled")
-            self.player_label.configure(state="disabled")
+#            self.player_label.configure(state="disabled")
             self.plugins_label.configure(state="disabled")
-
+#
             if self.status:
                 self.status = "Online"
             else:
@@ -275,7 +297,7 @@ I wasn't able to obtain this information.""","warning_tag")
 
 
 
-            self.motd_label.configure(bg_color=eerie_black)
+            #self.motd_label.configure(bg_color=eerie_black)
             self.eingabe_feld.delete(0,tk.END)
 
         except Exception as e:
